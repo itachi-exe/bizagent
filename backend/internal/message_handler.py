@@ -84,13 +84,15 @@ async def _dispatch_to_agent(
     """Runs in the background after the HTTP response has already been sent."""
     pool = get_pool()
     try:
-        reply_text = await engine.run(conversation_id, business_id, customer_id, message_text)
+        # engine.run() persists the agent message itself — no double-insert here
+        reply_text = await engine.run(conversation_id, business_id, message_text)
     except Exception:
         logger.exception("Agent engine raised for conversation %s", conversation_id)
         reply_text = "I'm having trouble right now. Please try again in a moment."
+        async with pool.acquire() as conn:
+            await conversation_queries.insert_message(conn, conversation_id, None, "agent", reply_text)
 
     async with pool.acquire() as conn:
-        await conversation_queries.insert_message(conn, conversation_id, None, "agent", reply_text)
         await conversation_queries.touch_conversation(conn, conversation_id)
 
     sent = await whatsapp_client.send(to=f"{to_phone_number}@s.whatsapp.net", text=reply_text)
