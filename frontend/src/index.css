@@ -1,0 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  html {
+    background: #0a0a0a;
+  }
+  body {
+    @apply m-0 min-w-[1024px] bg-bg font-sans text-primary antialiased;
+  }
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+  button {
+    @apply cursor-pointer;
+  }
+}
+@layer components {
+  .panel {
+    @apply border border-[rgba(255,255,255,0.05)] bg-surface;
+  }
+  .section-label {
+    @apply text-[10px] font-medium uppercase tracking-[0.2em] text-secondary;
+  }
+  .input {
+    @apply w-full rounded border border-border bg-[#101010] px-3 py-2.5 text-sm text-primary outline-none placeholder:text-secondary focus:border-green;
+  }
+  .button-primary {
+    @apply rounded border border-green bg-green px-4 py-2.5 text-sm font-medium text-[#07130b] transition hover:bg-[#35e87a] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .button-outline {
+    @apply rounded border border-border px-4 py-2.5 text-sm text-primary transition hover:border-secondary;
+  }
+  .skeleton {
+    @apply animate-pulse bg-white/[0.06];
+  }
+}

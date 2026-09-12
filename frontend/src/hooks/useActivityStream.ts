@@ -1,0 +1,3 @@
+import { useEffect, useState } from 'react'
+import type { ActivityEvent } from '../api/client'
+export function useActivityStream() { const [events, setEvents] = useState<ActivityEvent[]>([]); const [connected, setConnected] = useState(false); useEffect(() => { const source = new EventSource(`${import.meta.env.VITE_API_URL ?? 'http://localhost:8000'}/api/dashboard/activity`); source.onopen = () => setConnected(true); source.onerror = () => setConnected(false); source.onmessage = ({ data }) => { try { const event = JSON.parse(data) as ActivityEvent; setEvents(current => [event, ...current].slice(0, 50)) } catch { console.warn('Skipped malformed activity event') } }; return () => source.close() }, []); return { events, connected } }
