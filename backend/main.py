@@ -15,6 +15,7 @@ from dashboard.router import router as dashboard_router
 from db.connection import close_pool, init_pool
 from internal.message_handler import router as message_router
 from internal.owner_commands import router as owner_command_router
+from internal.voice_handler import router as voice_router
 from settings.router import router as settings_router
 from upload.router import router as upload_router
 
@@ -45,6 +46,7 @@ app.add_middleware(
 
 app.include_router(message_router)
 app.include_router(owner_command_router)
+app.include_router(voice_router)
 app.include_router(dashboard_router)
 app.include_router(settings_router)
 app.include_router(upload_router)

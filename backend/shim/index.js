@@ -83,11 +83,42 @@ async function startBaileys() {
     if (type !== 'notify') return;
     for (const msg of messages) {
       if (msg.key.fromMe) continue;
+
       const text = msg.message?.conversation || msg.message?.extendedTextMessage?.text;
-      if (!text) continue;
+      const isAudio = !text && (msg.message?.audioMessage || msg.message?.pttMessage);
+
+      if (!text && !isAudio) continue;
 
       const jid = msg.key.remoteJidAlt || msg.key.remoteJid;
       const phoneNumber = jid.replace('@s.whatsapp.net', '').replace('@lid', '');
+
+      if (isAudio) {
+        console.log(`[INBOUND VOICE] from=${phoneNumber}`);
+        try {
+          const { downloadMediaMessage } = require('@whiskeysockets/baileys');
+          const buffer = await downloadMediaMessage(msg, 'buffer', {}, { logger: console, reuploadRequest: sock.updateMediaMessage });
+          const audioPath = `/tmp/wa_voice_${Date.now()}.ogg`;
+          fs.writeFileSync(audioPath, buffer);
+
+          const resp = await fetch(`${INTERNAL_BASE}/internal/voice-message`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message_id: msg.key.id,
+              from: jid,
+              phone_number: phoneNumber,
+              display_name: msg.pushName || null,
+              audio_path: audioPath,
+              timestamp: Number(msg.messageTimestamp),
+            }),
+          });
+          console.log(`[FORWARD VOICE] /internal/voice-message → ${resp.status}`);
+        } catch (err) {
+          console.error(`[VOICE INBOUND FAIL] ${err.message}`);
+        }
+        continue;
+      }
+
       console.log(`[INBOUND] from=${phoneNumber} text="${text}"`);
 
       const payload = {
