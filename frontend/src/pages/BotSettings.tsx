@@ -115,7 +115,7 @@ export default function BotSettings() {
     <main className="min-h-screen bg-[var(--app-bg)] text-[var(--app-ink)]">
       <Navbar />
 
-      <div className="mx-auto max-w-5xl px-4 py-6 lg:px-10 lg:py-10">
+      <div className="mx-auto px-4 py-6 lg:px-10 lg:py-10">
         <p className="app-section-label">Agent configuration</p>
         <h1 className="mt-2 text-2xl font-light sm:text-3xl">Settings</h1>
 
@@ -141,7 +141,7 @@ export default function BotSettings() {
         </div>
 
         {/* Content grid: form (+ preview on Bot Identity) */}
-        <div className={`mt-8 ${activeTab === "Bot Identity" ? "grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]" : "max-w-3xl"}`}>
+        <div className={`mt-8 ${activeTab === "Bot Identity" ? "grid grid-cols-1 gap-6 lg:grid-cols-[1fr_400px]" : ""}`}>
 
           <section className="app-panel p-5 sm:p-8">
             {loading ? (

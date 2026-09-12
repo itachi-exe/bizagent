@@ -127,5 +127,18 @@ app.post('/send', async (req, res) => {
   if (!ok) console.error(`[SEND] delivery failed for ${to}`);
 });
 
+app.post('/send-voice', async (req, res) => {
+  const { to, audio_path } = req.body;
+  if (!to || !audio_path) return res.status(400).json({ error: 'missing to or audio_path' });
+  res.sendStatus(200);
+  try {
+    const buf = fs.readFileSync(audio_path);
+    await sock.sendMessage(to, { audio: buf, mimetype: 'audio/ogg; codecs=opus', ptt: true });
+    console.log(`[VOICE OK] to=${to}`);
+  } catch (err) {
+    console.error(`[VOICE FAIL] to=${to} err=${err.message}`);
+  }
+});
+
 app.listen(SHIM_PORT, () => console.log(`Baileys shim listening on :${SHIM_PORT}`));
 startBaileys();

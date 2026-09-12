@@ -98,3 +98,6 @@ async def _dispatch_to_agent(
     sent = await whatsapp_client.send(to=f"{to_phone_number}@s.whatsapp.net", text=reply_text)
     if not sent:
         logger.error("Could not deliver reply for conversation %s — Baileys shim unreachable", conversation_id)
+
+    if whatsapp_client.VOICE_REPLIES and reply_text:
+        await whatsapp_client.send_voice(to=f"{to_phone_number}@s.whatsapp.net", text=reply_text)

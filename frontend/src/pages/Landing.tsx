@@ -15,9 +15,9 @@ export default function Landing() {
     <main className="min-h-screen bg-[#0a0a0a] text-white">
 
       {/* Hero */}
-      <section className="relative flex h-screen flex-col items-center justify-center overflow-hidden bg-[url('/assets/bizagent-bg.jpg')] bg-cover bg-bottom">
+      <section className="relative flex h-screen flex-col items-start justify-center overflow-hidden bg-[url('/assets/bizagent-bg.jpg')] bg-cover bg-bottom">
         <Navbar landing />
-        <div className="relative mx-auto w-full max-w-6xl px-6 lg:-mt-32 lg:px-14">
+        <div className="relative w-full px-6 lg:-mt-32 lg:px-20">
           <p className="mb-7 text-[10px] font-medium uppercase tracking-[0.3em] text-[#9a9a8a]">
             WhatsApp-native business operations
           </p>
@@ -32,7 +32,7 @@ export default function Landing() {
             to="/settings/bot"
             className="mt-12 inline-block w-full bg-[#1a1a1a] px-8 py-3.5 text-center text-xs uppercase tracking-[0.12em] text-white transition-colors hover:bg-[#333] sm:w-auto"
           >
-            Request Access
+            Get Started
           </Link>
         </div>
       </section>

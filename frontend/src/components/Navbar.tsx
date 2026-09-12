@@ -13,7 +13,7 @@ export default function Navbar({ landing = false }: { landing?: boolean }) {
   ];
   return (
     <header
-      className={`relative flex items-center justify-between px-4 md:px-10 ${landing ? "absolute inset-x-0 top-0 z-10 h-16" : "sticky top-0 z-10 h-14 border-b border-[var(--app-border)] bg-[var(--app-surface)]"}`}
+      className={`flex items-center justify-between px-4 md:px-10 ${landing ? "absolute inset-x-0 top-0 z-10 h-16" : "relative sticky top-0 z-10 h-14 border-b border-[var(--app-border)] bg-[var(--app-surface)]"}`}
     >
       <Link
         to="/"
@@ -23,7 +23,7 @@ export default function Navbar({ landing = false }: { landing?: boolean }) {
       </Link>
       {landing ? (<>
         <Link to="/settings/bot" className="hidden text-xs uppercase tracking-[0.12em] px-5 py-2.5 bg-[#1a1a1a] text-white hover:bg-[#333] transition-colors md:block">
-          Request Access
+          Get Started
         </Link>
         <button onClick={() => setMenuOpen(open => !open)} className="text-2xl leading-none text-[#1a1a1a] md:hidden" aria-label="Toggle navigation" aria-expanded={menuOpen}>☰</button>
       </>) : (<>
@@ -52,7 +52,7 @@ export default function Navbar({ landing = false }: { landing?: boolean }) {
       </>)}
       <div className={`absolute inset-x-0 top-full border-b border-[var(--app-border)] bg-[var(--app-surface)] transition-all duration-200 md:hidden ${menuOpen ? "visible translate-y-0 opacity-100" : "invisible -translate-y-3 opacity-0"}`}>
         <nav className="flex flex-col px-4 py-4">
-          {landing ? <Link to="/settings/bot" onClick={() => setMenuOpen(false)} className="py-3 text-xs uppercase tracking-[0.12em] text-[var(--app-ink)]">Request Access</Link> : <>
+          {landing ? <Link to="/settings/bot" onClick={() => setMenuOpen(false)} className="py-3 text-xs uppercase tracking-[0.12em] text-[var(--app-ink)]">Get Started</Link> : <>
             {links.map(link => <Link key={link.to} to={link.to} onClick={() => setMenuOpen(false)} className={`py-3 text-xs uppercase tracking-[0.12em] ${pathname === link.to ? "text-[var(--app-ink)]" : "text-[var(--app-muted)]"}`}>{link.label}</Link>)}
             <button onClick={toggle} className="flex items-center gap-2 py-3 text-left text-xs uppercase tracking-[0.12em] text-[var(--app-muted)]">{theme === "light" ? <Moon size={14} /> : <Sun size={14} />} Toggle theme</button>
           </>}
