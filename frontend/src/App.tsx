@@ -6,7 +6,9 @@ import UploadDatabase from './pages/UploadDatabase'
 
 export default function App() {
   return <BrowserRouter><Routes>
-    <Route path="/" element={<Landing />} /><Route path="/dashboard" element={<Dashboard />} />
-    <Route path="/settings/bot" element={<BotSettings />} /><Route path="/settings/upload" element={<UploadDatabase />} />
+    <Route path="/" element={<Landing />} />
+    <Route path="/dashboard" element={<Dashboard />} />
+    <Route path="/settings/bot" element={<BotSettings />} />
+    <Route path="/settings/upload" element={<UploadDatabase />} />
   </Routes></BrowserRouter>
 }

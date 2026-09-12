@@ -33,7 +33,7 @@ async def build_system_prompt(business_id: str) -> str:
                   agent_name, agent_personality, agent_language_style
                   FROM businesses WHERE id=$1""", business_id)
         policies = await conn.fetchrow("""SELECT delivery, returns, payment_methods, cancellation
-                                         FROM business_policies WHERE business_id=$1""", business_id)
+                                         FROM policies WHERE business_id=$1""", business_id)
         perms = await conn.fetchrow("""SELECT can_create_quote, can_create_order,
                   can_approve_discount_up_to_pct, escalate_on
                   FROM agent_permissions WHERE business_id=$1""", business_id)

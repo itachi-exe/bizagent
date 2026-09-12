@@ -1,33 +1,81 @@
-// Baileys shim — bridges a WhatsApp Web session to the FastAPI backend.
-// Scope: normalize incoming text messages, forward them, and relay outgoing sends.
 require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 
 const express = require('express');
 const qrcode = require('qrcode-terminal');
-const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, delay } = require('@whiskeysockets/baileys');
+const fs = require('fs');
 
 const INTERNAL_BASE = `http://localhost:${process.env.BAILEYS_INTERNAL_PORT || 8000}`;
 const OWNER_PHONE_NUMBER = process.env.OWNER_PHONE_NUMBER || '';
 const SHIM_PORT = new URL(process.env.BAILEYS_SHIM_URL || 'http://localhost:8002').port || 8002;
 
 let sock;
+let isConnected = false;
+let sendQueue = []; // buffer sends while reconnecting
+
+async function flushQueue() {
+  while (sendQueue.length > 0 && isConnected) {
+    const { to, text, resolve } = sendQueue.shift();
+    try {
+      await sock.sendMessage(to, { text });
+      console.log(`[SEND OK] to=${to}`);
+      resolve(true);
+    } catch (err) {
+      console.error(`[SEND FAIL] to=${to} err=${err.message}`);
+      resolve(false);
+    }
+  }
+}
+
+async function sendMessage(to, text) {
+  return new Promise((resolve) => {
+    if (isConnected && sock) {
+      sock.sendMessage(to, { text })
+        .then(() => { console.log(`[SEND OK] to=${to}`); resolve(true); })
+        .catch((err) => { console.error(`[SEND FAIL] to=${to} err=${err.message}`); resolve(false); });
+    } else {
+      console.log(`[SEND QUEUED] to=${to} — not connected yet`);
+      sendQueue.push({ to, text, resolve });
+      // resolve false after 10s if still not connected
+      setTimeout(() => resolve(false), 10000);
+    }
+  });
+}
 
 async function startBaileys() {
   const { state, saveCreds } = await useMultiFileAuthState('./baileys_auth');
-  sock = makeWASocket({ auth: state });
+  sock = makeWASocket({
+    auth: state,
+    connectTimeoutMs: 60000,
+    defaultQueryTimeoutMs: 60000,
+    keepAliveIntervalMs: 15000,
+    retryRequestDelayMs: 3000,
+    generateHighQualityLinkPreview: false,
+    syncFullHistory: false,
+  });
 
   sock.ev.on('creds.update', saveCreds);
 
-  sock.ev.on('connection.update', (update) => {
+  sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update;
-    if (qr) qrcode.generate(qr, { small: true });
+    if (qr) {
+      qrcode.generate(qr, { small: true });
+      fs.writeFileSync('/tmp/baileys_qr.txt', qr);
+      console.log('QR_READY');
+    }
     if (connection === 'close') {
-      const shouldReconnect =
-        lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
-      console.log('Connection closed. Reconnecting:', shouldReconnect);
-      if (shouldReconnect) startBaileys();
+      isConnected = false;
+      const code = lastDisconnect?.error?.output?.statusCode;
+      const shouldReconnect = code !== DisconnectReason.loggedOut;
+      console.log(`[CONN CLOSED] code=${code} reconnect=${shouldReconnect}`);
+      if (shouldReconnect) {
+        await delay(3000);
+        startBaileys();
+      }
     } else if (connection === 'open') {
+      isConnected = true;
       console.log('Baileys connected.');
+      flushQueue();
     }
   });
 
@@ -36,12 +84,15 @@ async function startBaileys() {
     for (const msg of messages) {
       if (msg.key.fromMe) continue;
       const text = msg.message?.conversation || msg.message?.extendedTextMessage?.text;
-      if (!text) continue; // drop media, reactions, status updates — text only
+      if (!text) continue;
 
-      const phoneNumber = msg.key.remoteJid.replace('@s.whatsapp.net', '');
+      const jid = msg.key.remoteJidAlt || msg.key.remoteJid;
+      const phoneNumber = jid.replace('@s.whatsapp.net', '').replace('@lid', '');
+      console.log(`[INBOUND] from=${phoneNumber} text="${text}"`);
+
       const payload = {
         message_id: msg.key.id,
-        from: msg.key.remoteJid,
+        from: jid,
         phone_number: phoneNumber,
         display_name: msg.pushName || null,
         text,
@@ -53,13 +104,14 @@ async function startBaileys() {
       const body = isOwnerCommand ? { from: payload.from, text } : payload;
 
       try {
-        await fetch(`${INTERNAL_BASE}${path}`, {
+        const resp = await fetch(`${INTERNAL_BASE}${path}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         });
+        console.log(`[FORWARD] ${path} → ${resp.status}`);
       } catch (err) {
-        console.error('Failed to forward message to FastAPI:', err.message);
+        console.error(`[FORWARD FAIL] ${err.message}`);
       }
     }
   });
@@ -68,14 +120,12 @@ async function startBaileys() {
 const app = express();
 app.use(express.json());
 
-// Must ACK the caller fast — fire the WhatsApp send without blocking the response.
-app.post('/send', (req, res) => {
+app.post('/send', async (req, res) => {
   const { to, text } = req.body;
-  res.sendStatus(200);
-  if (!sock) return console.error('Send requested before Baileys connected');
-  sock.sendMessage(to, { text }).catch((err) => console.error('sendMessage failed:', err.message));
+  res.sendStatus(200); // ACK immediately
+  const ok = await sendMessage(to, text);
+  if (!ok) console.error(`[SEND] delivery failed for ${to}`);
 });
 
 app.listen(SHIM_PORT, () => console.log(`Baileys shim listening on :${SHIM_PORT}`));
-
 startBaileys();

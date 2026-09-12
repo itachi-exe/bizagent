@@ -18,7 +18,7 @@ def get_client() -> httpx.AsyncClient:
 
 async def send(to: str, text: str) -> bool:
     """POST to the Baileys shim /send endpoint. Never raises — logs and returns False on failure."""
-    shim_url = os.environ["BAILEYS_SHIM_URL"]
+    shim_url = os.environ.get("BAILEYS_SHIM_URL", "http://localhost:8002")
     try:
         client = get_client()
         response = await client.post(f"{shim_url}/send", json={"to": to, "text": text})

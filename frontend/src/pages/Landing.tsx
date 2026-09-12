@@ -37,24 +37,23 @@ const activities = [
 export default function Landing() {
   return (
     <main className="min-h-screen bg-bg">
-      <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-[url('/assets/bizagent-bg.jpg')] bg-cover bg-center">
-        <div className="absolute inset-0 bg-[#0a0a0a]/50" />
+      <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-[url('/assets/bizagent-bg.jpg')] bg-cover bg-bottom">
         <Navbar landing />
-        <div className="relative mx-auto w-full max-w-6xl px-14">
-          <p className="mb-7 text-[10px] font-medium uppercase tracking-[0.3em] text-[rgba(255,255,255,0.35)]">
+        <div className="relative mx-auto w-full max-w-6xl px-14 -mt-32">
+          <p className="mb-7 text-[10px] font-medium uppercase tracking-[0.3em] text-[#9a9a8a]">
             WhatsApp-native business operations
           </p>
-          <h1 className="max-w-5xl text-7xl font-light leading-[1.05] tracking-tight text-white lg:text-8xl">
+          <h1 className="max-w-5xl text-7xl font-light leading-[1.05] tracking-tight text-[#1a1a1a] lg:text-8xl">
             Your business already runs on WhatsApp. Now your AI can run there
             too.
           </h1>
-          <p className="mt-8 max-w-xl text-lg font-light leading-8 text-white/50">
+          <p className="mt-8 max-w-xl text-lg font-light leading-8 text-[#555]">
             BizAgent is an AI employee that knows your products, enforces your
             policies, and creates real orders. Directly in WhatsApp.
           </p>
           <Link
             to="/settings/bot"
-            className="button-primary mt-12 inline-block px-8 py-3"
+            className="mt-12 inline-block px-8 py-3 bg-[#1a1a1a] text-white text-xs uppercase tracking-[0.12em] hover:bg-[#333] transition-colors"
           >
             Request Access
           </Link>

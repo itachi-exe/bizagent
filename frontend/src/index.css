@@ -2,6 +2,41 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Light theme (default) */
+:root, [data-theme="light"] {
+  --app-bg: #f5f4ef;
+  --app-surface: #ffffff;
+  --app-border: #e8e6e0;
+  --app-ink: #1a1a1a;
+  --app-muted: #9a9a8a;
+  --app-olive: #5a7a5a;
+  --app-bar-inactive: #e2e4dc;
+  --app-row-border: #f0ede6;
+  --app-input-bg: #ffffff;
+  --app-input-border: #e0ddd6;
+  --app-ghost-border: #c8c6be;
+  --app-chat-bg: #f0ede6;
+  --app-skeleton: #ececec;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --app-bg: #0f0f0f;
+  --app-surface: #1a1a1a;
+  --app-border: rgba(255,255,255,0.08);
+  --app-ink: #f0f0f0;
+  --app-muted: #888888;
+  --app-olive: #6b9e6b;
+  --app-bar-inactive: #2a2a2a;
+  --app-row-border: rgba(255,255,255,0.05);
+  --app-input-bg: #242424;
+  --app-input-border: rgba(255,255,255,0.1);
+  --app-ghost-border: rgba(255,255,255,0.15);
+  --app-chat-bg: #1e1e1e;
+  --app-skeleton: #242424;
+}
+
 @layer base {
   html {
     background: #0a0a0a;
@@ -39,8 +74,8 @@
     @apply animate-pulse bg-white/[0.06];
   }
   .app-panel {
-    background: white;
-    border: 1px solid #e8e6e0;
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   }
@@ -49,23 +84,24 @@
     font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #9a9a8a;
+    color: var(--app-muted);
   }
   .app-input {
     width: 100%;
-    background: white;
-    border: 1px solid #e0ddd6;
+    background: var(--app-input-bg);
+    border: 1px solid var(--app-input-border);
     border-radius: 2px;
     padding: 10px 12px;
     font-size: 14px;
-    color: #1a1a1a;
+    color: var(--app-ink);
     outline: none;
+    transition: border-color 0.15s;
   }
-  .app-input:focus { border-color: #5a7a5a; }
-  .app-input::placeholder { color: #b0aea6; }
+  .app-input:focus { border-color: var(--app-olive); }
+  .app-input::placeholder { color: var(--app-muted); }
   .app-btn-primary {
-    background: #1a1a1a;
-    color: white;
+    background: var(--app-ink);
+    color: var(--app-surface);
     font-size: 11px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -73,15 +109,25 @@
     border-radius: 2px;
     border: none;
     cursor: pointer;
+    transition: opacity 0.15s;
   }
-  .app-btn-primary:hover { background: #333; }
+  .app-btn-primary:hover { opacity: 0.85; }
   .app-btn-ghost {
-    background: white;
-    border: 1px solid #c8c6be;
-    color: #1a1a1a;
+    background: var(--app-surface);
+    border: 1px solid var(--app-ghost-border);
+    color: var(--app-ink);
     font-size: 11px;
     padding: 8px 14px;
     border-radius: 2px;
     cursor: pointer;
+  }
+  .app-skeleton {
+    background: var(--app-skeleton);
+    border-radius: 2px;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
   }
 }

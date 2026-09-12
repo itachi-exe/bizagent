@@ -39,9 +39,9 @@ async def _audit(conversation_id: str, business_id: str, name: str, arguments: d
     try:
         pool = get_pool()
         async with pool.acquire() as conn:
-            await conn.execute("""INSERT INTO tool_calls (business_id, conversation_id, tool_name, arguments, result)
-                                  VALUES ($1, $2, $3, $4::jsonb, $5::jsonb)""",
-                               business_id, conversation_id, name, json.dumps(arguments), json.dumps(result))
+            await conn.execute("""INSERT INTO tool_calls (tool_name, arguments, result)
+                                  VALUES ($1, $2::jsonb, $3::jsonb)""",
+                               name, json.dumps(arguments), json.dumps(result))
     except Exception:
         logger.exception("Could not audit tool call")
 
@@ -81,7 +81,10 @@ async def run(conversation_id: str, business_id: str, message_text: str) -> str:
         # that invoke the engine before persistence.
         if not history or history[-1] != {"role": "user", "content": message_text}:
             messages.append({"role": "user", "content": message_text})
-        client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        client = AsyncOpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY"),
+            base_url=os.environ.get("OPENAI_BASE_URL", "https://api.deepseek.com/v1"),
+        )
         tool_count = 0
         while tool_count < MAX_TOOL_CALLS:
             response = await client.chat.completions.create(
