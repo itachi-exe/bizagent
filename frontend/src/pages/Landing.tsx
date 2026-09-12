@@ -39,30 +39,30 @@ export default function Landing() {
     <main className="min-h-screen bg-bg">
       <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-[url('/assets/bizagent-bg.jpg')] bg-cover bg-bottom">
         <Navbar landing />
-        <div className="relative mx-auto w-full max-w-6xl px-14 -mt-32">
+        <div className="relative mx-auto w-full max-w-6xl px-6 lg:-mt-32 lg:px-14">
           <p className="mb-7 text-[10px] font-medium uppercase tracking-[0.3em] text-[#9a9a8a]">
             WhatsApp-native business operations
           </p>
-          <h1 className="max-w-5xl text-7xl font-light leading-[1.05] tracking-tight text-[#1a1a1a] lg:text-8xl">
+          <h1 className="max-w-5xl text-4xl font-light leading-[1.05] tracking-tight text-[#1a1a1a] md:text-6xl lg:text-8xl">
             Your business already runs on WhatsApp. Now your AI can run there
             too.
           </h1>
-          <p className="mt-8 max-w-xl text-lg font-light leading-8 text-[#555]">
+          <p className="mt-8 max-w-xl text-base font-light leading-8 text-[#555] lg:text-lg">
             BizAgent is an AI employee that knows your products, enforces your
             policies, and creates real orders. Directly in WhatsApp.
           </p>
           <Link
             to="/settings/bot"
-            className="mt-12 inline-block px-8 py-3 bg-[#1a1a1a] text-white text-xs uppercase tracking-[0.12em] hover:bg-[#333] transition-colors"
+            className="mt-12 block w-full px-8 py-3 bg-[#1a1a1a] text-center text-xs uppercase tracking-[0.12em] text-white transition-colors hover:bg-[#333] md:inline-block md:w-auto"
           >
             Request Access
           </Link>
         </div>
       </section>
       <div className="border-t border-[rgba(255,255,255,0.06)]" />
-      <section className="mx-auto max-w-6xl px-10 py-40">
+      <section className="mx-auto max-w-6xl px-6 py-20 md:py-32 lg:px-10 lg:py-40">
         <p className="section-label mb-8 border-t border-[rgba(255,255,255,0.05)] pt-8">Not a chatbot. An AI employee.</p>
-        <div className="mt-0 grid grid-cols-3 gap-20">
+        <div className="mt-0 grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3 lg:gap-20">
           <Pillar
             number="01"
             title="Quotes real prices"
@@ -81,9 +81,9 @@ export default function Landing() {
         </div>
       </section>
       <div className="mx-auto max-w-6xl border-t border-[rgba(255,255,255,0.06)]" />
-      <section className="mx-auto max-w-6xl px-10 py-40">
+      <section className="mx-auto max-w-6xl px-6 py-20 md:py-32 lg:px-10 lg:py-40">
         <p className="section-label">The operating layer</p>
-        <div className="mt-7 grid grid-cols-[1fr_1.4fr] gap-20">
+        <div className="mt-7 grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
           <div>
             <h2 className="text-5xl font-light leading-[1.08] tracking-tight lg:text-6xl">
               Clarity for every conversation.
@@ -97,7 +97,7 @@ export default function Landing() {
           <DashboardMockup />
         </div>
       </section>
-      <footer className="border-t border-[rgba(255,255,255,0.06)] px-10 py-10 text-xs text-secondary">
+      <footer className="border-t border-[rgba(255,255,255,0.06)] px-6 py-10 text-xs text-secondary lg:px-10">
         © 2026 BizAgent
       </footer>
     </main>
@@ -124,7 +124,7 @@ function Pillar({
 
 function DashboardMockup() {
   return (
-    <div className="border border-[rgba(255,255,255,0.06)] bg-[#0d0d0d] p-10">
+    <div className="border border-[rgba(255,255,255,0.06)] bg-[#0d0d0d] p-5 md:p-10">
       <div className="mb-9 flex items-center justify-between">
         <span className="section-label">Owner dashboard</span>
         <span className="text-xs text-green">
@@ -132,7 +132,7 @@ function DashboardMockup() {
           Live
         </span>
       </div>
-      <div className="grid grid-cols-4 border-y border-[rgba(255,255,255,0.06)] py-6">
+      <div className="grid grid-cols-2 border-y border-[rgba(255,255,255,0.06)] py-6 sm:grid-cols-4">
         <MockStat value="128" label="Conversations" />
         <MockStat value="24" label="Orders" />
         <MockStat value="03" label="Escalations" />
